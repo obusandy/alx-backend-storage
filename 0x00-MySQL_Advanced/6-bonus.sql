@@ -1,26 +1,24 @@
 --  creates a stored procedure AddBonus that adds
 -- a new correction for a student.
+-- Drop the procedure if it already exists
 
-DELIMITER //
-CREATE PROCEDURE AddBonus(IN user_id INT, IN project_name VARCHAR(255), IN score INT)
+DROP PROCEDURE IF EXISTS AddBonus;
+DELIMITER $$
+-- Create the procedure
+CREATE PROCEDURE AddBonus(
+    IN user_id INT,
+    IN project_name VARCHAR(255),
+    IN score FLOAT)
 BEGIN
-    DECLARE project INT;
-    -- find the project by name
-    SELECT id INTO project FROM projects WHERE name = project_name;
-    IF project IS NOT
-    -- if the project exists
-    THEN
-        INSERT INTO corrections (user_id, project_id, score)
-        VALUES (user_id, project, score);
-    ELSEIF project IS NULL
+    DECLARE project_id INT; -- Declare a variable to store the project ID
+    IF (SELECT COUNT(*) FROM projects WHERE name = project_name) = 0
+    -- If the project does not exist, insert it into the projects table
     THEN
         INSERT INTO projects (name) VALUES (project_name);
-    -- retrieve new id
-        SELECT id INTO project FROM projects WHERE name = project_name;
-        -- corrections for the new project
-        INSERT INTO corrections (user_id, project_id, score)
-        VALUES (user_id, project, score);
     END IF;
-END //
-
+    SET project_id = (SELECT id FROM projects WHERE name = project_name LIMIT 1);
+    INSERT INTO corrections (user_id, project_id, score) VALUES(user_id, project_id, score);
+END
+$$
+-- Reset the delimiter back to ;
 DELIMITER ;
