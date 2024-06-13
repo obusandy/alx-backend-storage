@@ -3,4 +3,7 @@
 -- no last_meeting or more than 1 month.
 -- They score are under (strict) to 80
 
-CREATE VIEW need_meeting AS SELECT name FROM students WHERE score < 80 AND (last_meeting IS NULL OR last_meeting < DATE(CURDATE() - INTERVAL 1 MONTH));
+DROP VIEW IF EXISTS need_meeting;
+CREATE VIEW need_meeting AS
+SELECT name FROM students WHERE score < 80
+AND (students.last_meeting IS NULL OR students.last_meeting < DATE_ADD(NOW(), INTERVAL -1 MONTH));

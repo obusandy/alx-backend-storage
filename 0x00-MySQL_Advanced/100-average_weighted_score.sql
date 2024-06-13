@@ -9,12 +9,11 @@ BEGIN
     SET weit_avg_score =
                         (SELECT SUM(score * weight) / SUM(weight)
                         FROM users AS Usr
-                        JOIN corrections as C ON U.id=C.user_id
-                        JOIN projects AS P ON C.project_id=P.id
+                        JOIN corrections as Crrt ON Usr.id=Crrt.user_id
+                        JOIN projects AS Prj ON Crrt.project_id=Prj.id
                         WHERE Usr.id=user_id)
     UPDATE users
     SET average_score = weit_avg_score
     WHERE id=user_id;
-END
-$$
+END $$
 DELIMITER ;
