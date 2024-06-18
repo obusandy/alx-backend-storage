@@ -1,0 +1,2 @@
+// below is a script that lists all docmnts in the collection
+db.school.find()
